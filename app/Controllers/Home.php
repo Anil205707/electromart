@@ -4,8 +4,15 @@ namespace App\Controllers;
 
 class Home extends BaseController
 {
-    public function index(): string
+    public function index()
     {
-        return view('welcome_message');
+        try {
+            $db = \Config\Database::connect();
+            $db->initialize();
+
+            echo "Database connected successfully.";
+        } catch (\Throwable $e) {
+            echo "Error: " . $e->getMessage();
+        }
     }
 }
