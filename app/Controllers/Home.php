@@ -6,13 +6,10 @@ class Home extends BaseController
 {
     public function index()
     {
-        try {
-            $db = \Config\Database::connect();
-            $db->initialize();
-
-            echo "Database connected successfully.";
-        } catch (\Throwable $e) {
-            echo "Error: " . $e->getMessage();
+        if (!session()->get('logged_in')) {
+            return redirect()->to(base_url('index.php/login'));
         }
+
+        return view('home');
     }
 }
