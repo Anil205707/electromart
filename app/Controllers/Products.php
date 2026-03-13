@@ -6,22 +6,35 @@ use App\Models\ProductModel;
 
 class Products extends BaseController
 {
-    public function index()
-    {
-        if (!session()->get('logged_in')) {
-            return redirect()->to(base_url('index.php/login'));
-        }
-
-        $productModel = new ProductModel();
-
-        $products = $productModel
-            ->select('products.*, users.name as seller_name')
-            ->join('users', 'users.id = products.seller_id')
-            ->orderBy('products.id', 'DESC')
-            ->findAll();
-
-        return view('products/index', ['products' => $products]);
+   public function index()
+{
+    if (!session()->get('logged_in')) {
+        return redirect()->to(base_url('index.php/login'));
     }
+
+    $productModel = new \App\Models\ProductModel();
+    $q = trim((string) $this->request->getGet('q'));
+
+    $builder = $productModel
+        ->select('products.*, users.name as seller_name')
+        ->join('users', 'users.id = products.seller_id')
+        ->orderBy('products.id', 'DESC');
+
+    if ($q !== '') {
+        $builder->groupStart()
+            ->like('products.title', $q)
+            ->orLike('products.category', $q)
+            ->orLike('products.description', $q)
+            ->groupEnd();
+    }
+
+    $products = $builder->findAll();
+
+    return view('products/index', [
+        'products' => $products,
+        'q' => $q
+    ]);
+}
 
     public function create()
     {
