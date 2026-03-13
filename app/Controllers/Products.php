@@ -110,4 +110,31 @@ class Products extends BaseController
 
         return view('products/show', ['product' => $product]);
     }
+
+    public function searchAjax()
+{
+    if (!session()->get('logged_in')) {
+        return $this->response->setJSON([]);
+    }
+
+    $productModel = new \App\Models\ProductModel();
+    $q = trim((string) $this->request->getGet('q'));
+
+    $builder = $productModel
+        ->select('products.*, users.name as seller_name')
+        ->join('users', 'users.id = products.seller_id')
+        ->orderBy('products.id', 'DESC');
+
+    if ($q !== '') {
+        $builder->groupStart()
+            ->like('products.title', $q)
+            ->orLike('products.category', $q)
+            ->orLike('products.description', $q)
+            ->groupEnd();
+    }
+
+    $products = $builder->findAll();
+
+    return $this->response->setJSON($products);
+}
 }

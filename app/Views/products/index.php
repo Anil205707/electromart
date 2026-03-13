@@ -13,17 +13,23 @@
 <?php endif; ?>
 
 <div class="search-box mb-4">
-    <form method="get" action="<?= base_url('index.php/products') ?>" class="row g-3">
+    <div class="row g-3">
         <div class="col-md-10">
-            <input type="text" name="q" class="form-control form-control-lg" placeholder="Search products..." value="<?= esc($q ?? '') ?>">
+            <input
+                type="text"
+                id="liveSearch"
+                class="form-control form-control-lg"
+                placeholder="Search products by name, category, or description..."
+                value="<?= esc($q ?? '') ?>"
+            >
         </div>
         <div class="col-md-2 d-grid">
-            <button type="submit" class="btn btn-success btn-lg">Search</button>
+            <button type="button" id="searchBtn" class="btn btn-success btn-lg">Search</button>
         </div>
-    </form>
+    </div>
 </div>
 
-<div class="row g-4">
+<div class="row g-4" id="productsContainer">
     <?php if (empty($products)): ?>
         <div class="col-12">
             <div class="alert alert-warning">No products found.</div>
@@ -50,5 +56,80 @@
         <?php endforeach; ?>
     <?php endif; ?>
 </div>
+
+<script>
+    const searchInput = document.getElementById('liveSearch');
+    const searchBtn = document.getElementById('searchBtn');
+    const productsContainer = document.getElementById('productsContainer');
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text ?? '';
+        return div.innerHTML;
+    }
+
+    function renderProducts(products) {
+        if (!products.length) {
+            productsContainer.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-warning">No products found.</div>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+
+        products.forEach(product => {
+            const imageUrl = product.image
+                ? `<?= base_url('uploads/') ?>${product.image}`
+                : 'https://via.placeholder.com/400x220?text=No+Image';
+
+            html += `
+                <div class="col-md-6 col-lg-4">
+                    <div class="custom-card">
+                        <img src="${imageUrl}" alt="Product Image" class="product-image mb-3">
+
+                        <h4>${escapeHtml(product.title)}</h4>
+                        <p class="mb-2"><strong>Category:</strong> ${escapeHtml(product.category)}</p>
+                        <p class="mb-2"><strong>Price:</strong> £${escapeHtml(product.price)}</p>
+                        <p class="mb-2"><strong>Seller:</strong> ${escapeHtml(product.seller_name)}</p>
+                        <p class="text-muted">${escapeHtml(product.description)}</p>
+
+                        <a href="<?= base_url('index.php/products/show/') ?>${product.id}" class="btn btn-outline-primary w-100">View Details</a>
+                    </div>
+                </div>
+            `;
+        });
+
+        productsContainer.innerHTML = html;
+    }
+
+    async function fetchProducts() {
+        const query = searchInput.value.trim();
+        const url = `<?= base_url('index.php/products/search-ajax') ?>?q=${encodeURIComponent(query)}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            renderProducts(data);
+        } catch (error) {
+            productsContainer.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-danger">Failed to load search results.</div>
+                </div>
+            `;
+        }
+    }
+
+    let debounceTimer;
+
+    searchInput.addEventListener('keyup', function () {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(fetchProducts, 300);
+    });
+
+    searchBtn.addEventListener('click', fetchProducts);
+</script>
 
 <?= view('layout/footer') ?>
