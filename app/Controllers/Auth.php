@@ -41,7 +41,7 @@ class Auth extends BaseController
                 return redirect()->back()->withInput()->with('error', 'Registration failed.');
             }
 
-            return redirect()->to(base_url('index.php/login'))->with('success', 'Registration successful. Please login.');
+            return redirect()->to(base_url('public/index.php/login'))->with('success', 'Registration successful. Please login.');
         } catch (\Throwable $e) {
             return 'Error: ' . $e->getMessage();
         }
@@ -76,7 +76,7 @@ class Auth extends BaseController
                 'logged_in' => true,
             ]);
 
-            return redirect()->to(base_url('index.php/'));
+            return redirect()->to(base_url('public/index.php/'));
         } catch (\Throwable $e) {
             return 'Error: ' . $e->getMessage();
         }
@@ -85,6 +85,6 @@ class Auth extends BaseController
     public function logout()
     {
         session()->destroy();
-        return redirect()->to(base_url('index.php/login'))->with('success', 'Logged out successfully.');
+        return redirect()->to(base_url('public/index.php/login'))->with('success', 'Logged out successfully.');
     }
 }
