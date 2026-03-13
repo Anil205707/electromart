@@ -15,7 +15,7 @@
         <p style="color:green;"><?= esc(session()->getFlashdata('success')) ?></p>
     <?php endif; ?>
 
-    <form method="post" action="<?= base_url('public/index.php/register') ?>">
+    <form method="post" action="<?= base_url('index.php/register') ?>">
         <label for="name">Name:</label><br>
         <input type="text" id="name" name="name" value="<?= old('name') ?>"><br><br>
 
@@ -30,7 +30,7 @@
 
     <p>
         Already have an account?
-        <a href="<?= base_url('public/index.php/login') ?>">Login here</a>
+        <a href="<?= base_url('index.php/login') ?>">Login here</a>
     </p>
 </body>
 </html>
