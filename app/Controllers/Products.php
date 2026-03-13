@@ -28,10 +28,12 @@ class Products extends BaseController
             ->groupEnd();
     }
 
-    $products = $builder->findAll();
+    // Pagination (12 products per page)
+    $products = $builder->paginate(12);
 
     return view('products/index', [
         'products' => $products,
+        'pager' => $productModel->pager,
         'q' => $q
     ]);
 }

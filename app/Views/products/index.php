@@ -131,5 +131,9 @@
 
     searchBtn.addEventListener('click', fetchProducts);
 </script>
+</div>
 
+<div class="mt-5 d-flex justify-content-center">
+    <?= $pager->links() ?>
+</div>
 <?= view('layout/footer') ?>
