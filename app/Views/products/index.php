@@ -27,7 +27,7 @@
             >
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <select name="category" class="form-select form-select-lg">
                 <option value="">All Categories</option>
                 <?php foreach ($categories as $cat): ?>
@@ -46,16 +46,29 @@
             </select>
         </div>
 
+        <div class="col-md-2">
+            <select id="currencySelect" class="form-select form-select-lg">
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="INR">INR (₹)</option>
+                <option value="NPR">NPR (Rs)</option>
+            </select>
+        </div>
+
         <div class="col-md-1 d-grid">
             <button type="submit" class="btn btn-success btn-lg">Apply</button>
         </div>
 
-        <div class="col-md-2 d-grid">
-            <button type="button" id="convertPricesBtn" class="btn btn-dark btn-lg">
-                Convert to USD
-            </button>
+        <div class="col-md-1 d-grid">
+            <button type="button" id="convertPricesBtn" class="btn btn-dark btn-lg">Convert</button>
         </div>
     </form>
+
+    <div class="row g-3 mt-2">
+        <div class="col-md-3 d-grid">
+            <button type="button" id="resetPricesBtn" class="btn btn-outline-secondary">Reset to GBP</button>
+        </div>
+    </div>
 </div>
 
 <div class="row g-4">
@@ -134,8 +147,17 @@ document.querySelectorAll('.favourite-btn').forEach(button => {
     });
 });
 
-document.getElementById('convertPricesBtn').addEventListener('click', async function () {
-    const button = this;
+const currencySymbols = {
+    USD: '$',
+    EUR: '€',
+    INR: '₹',
+    NPR: 'Rs '
+};
+
+async function convertPrices() {
+    const button = document.getElementById('convertPricesBtn');
+    const selectedCurrency = document.getElementById('currencySelect').value;
+
     button.disabled = true;
     button.textContent = 'Converting...';
 
@@ -143,24 +165,41 @@ document.getElementById('convertPricesBtn').addEventListener('click', async func
         const response = await fetch('https://open.er-api.com/v6/latest/GBP');
         const data = await response.json();
 
-        if (data.result === 'success' && data.rates && data.rates.USD) {
-            const rate = data.rates.USD;
+        if (data.result === 'success' && data.rates && data.rates[selectedCurrency]) {
+            const rate = data.rates[selectedCurrency];
+            const symbol = currencySymbols[selectedCurrency] ?? '';
 
             document.querySelectorAll('.price-line').forEach(priceLine => {
                 const gbpPrice = parseFloat(priceLine.dataset.price);
-                const usdPrice = (gbpPrice * rate).toFixed(2);
+                const convertedPrice = (gbpPrice * rate).toFixed(2);
 
-                priceLine.querySelector('.price-text').textContent = '$' + usdPrice + ' USD';
+                priceLine.querySelector('.price-text').textContent =
+                    symbol + convertedPrice + ' ' + selectedCurrency;
             });
 
-            button.textContent = 'Converted to USD';
+            button.textContent = 'Converted';
         } else {
-            button.textContent = 'Conversion Failed';
+            button.textContent = 'Failed';
         }
     } catch (error) {
-        button.textContent = 'Conversion Failed';
+        button.textContent = 'Failed';
     }
-});
+
+    setTimeout(() => {
+        button.disabled = false;
+        button.textContent = 'Convert';
+    }, 800);
+}
+
+function resetPricesToGBP() {
+    document.querySelectorAll('.price-line').forEach(priceLine => {
+        const gbpPrice = parseFloat(priceLine.dataset.price).toFixed(2);
+        priceLine.querySelector('.price-text').textContent = '£' + gbpPrice;
+    });
+}
+
+document.getElementById('convertPricesBtn').addEventListener('click', convertPrices);
+document.getElementById('resetPricesBtn').addEventListener('click', resetPricesToGBP);
 </script>
 
 <?= view('layout/footer') ?>
