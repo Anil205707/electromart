@@ -124,8 +124,8 @@
     <?php endif; ?>
 </div>
 
-<div class="pagination-wrapper d-flex justify-content-center">
-    <?= $pager->links('default', 'custom_pager') ?>
+<div class="mt-4 d-flex justify-content-center">
+    <?= $pager->links() ?>
 </div>
 
 <script>

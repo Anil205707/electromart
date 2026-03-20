@@ -2,7 +2,7 @@
 
 <footer>
     <div class="container">
-        <p class="mb-0">© <?= date('Y') ?> ElectroMart. Built with CodeIgniter 4 and Bootstrap 5.</p>
+        <p class="mb-0">© <?= date('Y') ?> ElectroMart.</p>
     </div>
 </footer>
 
