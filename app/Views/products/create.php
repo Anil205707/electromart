@@ -33,7 +33,7 @@
 
                 <div class="mb-4">
                     <label class="form-label">Product Image</label>
-                    <input type="file" name="image" class="form-control">
+                    <input type="file" name="image" class="form-control" accept="image/*" capture="environment">
                 </div>
 
                 <div class="d-flex gap-3">

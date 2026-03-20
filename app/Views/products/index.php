@@ -5,9 +5,9 @@
         <h1 class="page-title">ElectroMart Products</h1>
         <p class="text-muted mb-0">Hello, <?= esc(session()->get('user_name')) ?>. Browse the latest listings below.</p>
     </div>
-    <div class="mt-3 mt-md-0 d-flex gap-2">
-        <a href="<?= base_url('index.php/favourites') ?>" class="btn btn-warning">My Favourites</a>
-        <a href="<?= base_url('index.php/products/create') ?>" class="btn btn-primary">+ Add Product</a>
+    <div class="mt-3 mt-md-0 d-flex gap-2 flex-wrap">
+        <a href="<?= base_url('favourites') ?>" class="btn btn-warning">My Favourites</a>
+        <a href="<?= base_url('products/create') ?>" class="btn btn-primary">+ Add Product</a>
     </div>
 </div>
 
@@ -16,8 +16,8 @@
 <?php endif; ?>
 
 <div class="search-box mb-4">
-    <form method="get" action="<?= base_url('index.php/products') ?>" class="row g-3">
-        <div class="col-md-5">
+    <form method="get" action="<?= base_url('products') ?>" class="row g-3">
+        <div class="col-md-4">
             <input
                 type="text"
                 name="q"
@@ -46,8 +46,14 @@
             </select>
         </div>
 
-        <div class="col-md-2 d-grid">
+        <div class="col-md-1 d-grid">
             <button type="submit" class="btn btn-success btn-lg">Apply</button>
+        </div>
+
+        <div class="col-md-2 d-grid">
+            <button type="button" id="convertPricesBtn" class="btn btn-dark btn-lg">
+                Convert to USD
+            </button>
         </div>
     </form>
 </div>
@@ -79,11 +85,16 @@
                     </div>
 
                     <p class="mb-2"><strong>Category:</strong> <?= esc($product['category']) ?></p>
-                    <p class="mb-2"><strong>Price:</strong> £<?= esc($product['price']) ?></p>
+
+                    <p class="mb-2 price-line" data-price="<?= esc($product['price']) ?>">
+                        <strong>Price:</strong>
+                        <span class="price-text">£<?= esc($product['price']) ?></span>
+                    </p>
+
                     <p class="mb-2"><strong>Seller:</strong> <?= esc($product['seller_name']) ?></p>
                     <p class="text-muted"><?= esc($product['description']) ?></p>
 
-                    <a href="<?= base_url('index.php/products/show/' . $product['id']) ?>" class="btn btn-outline-primary w-100">View Details</a>
+                    <a href="<?= base_url('products/show/' . $product['id']) ?>" class="btn btn-outline-primary w-100">View Details</a>
                 </div>
             </div>
         <?php endforeach; ?>
@@ -100,7 +111,7 @@ document.querySelectorAll('.favourite-btn').forEach(button => {
         const productId = this.dataset.productId;
 
         try {
-            const response = await fetch("<?= base_url('index.php/favourites/toggle') ?>", {
+            const response = await fetch("<?= base_url('favourites/toggle') ?>", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
@@ -121,6 +132,34 @@ document.querySelectorAll('.favourite-btn').forEach(button => {
             alert('Failed to update favourite.');
         }
     });
+});
+
+document.getElementById('convertPricesBtn').addEventListener('click', async function () {
+    const button = this;
+    button.disabled = true;
+    button.textContent = 'Converting...';
+
+    try {
+        const response = await fetch('https://open.er-api.com/v6/latest/GBP');
+        const data = await response.json();
+
+        if (data.result === 'success' && data.rates && data.rates.USD) {
+            const rate = data.rates.USD;
+
+            document.querySelectorAll('.price-line').forEach(priceLine => {
+                const gbpPrice = parseFloat(priceLine.dataset.price);
+                const usdPrice = (gbpPrice * rate).toFixed(2);
+
+                priceLine.querySelector('.price-text').textContent = '$' + usdPrice + ' USD';
+            });
+
+            button.textContent = 'Converted to USD';
+        } else {
+            button.textContent = 'Conversion Failed';
+        }
+    } catch (error) {
+        button.textContent = 'Conversion Failed';
+    }
 });
 </script>
 
