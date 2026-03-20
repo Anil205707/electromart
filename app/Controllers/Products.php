@@ -6,19 +6,21 @@ use App\Models\ProductModel;
 
 class Products extends BaseController
 {
-   public function index()
+  public function index()
 {
     if (!session()->get('logged_in')) {
         return redirect()->to(base_url('index.php/login'));
     }
 
     $productModel = new \App\Models\ProductModel();
+
     $q = trim((string) $this->request->getGet('q'));
+    $category = trim((string) $this->request->getGet('category'));
+    $sort = trim((string) $this->request->getGet('sort'));
 
     $builder = $productModel
         ->select('products.*, users.name as seller_name')
-        ->join('users', 'users.id = products.seller_id')
-        ->orderBy('products.id', 'DESC');
+        ->join('users', 'users.id = products.seller_id');
 
     if ($q !== '') {
         $builder->groupStart()
@@ -28,14 +30,39 @@ class Products extends BaseController
             ->groupEnd();
     }
 
-    // Pagination (12 products per page)
+    if ($category !== '') {
+        $builder->where('products.category', $category);
+    }
+
+    switch ($sort) {
+        case 'price_low':
+            $builder->orderBy('products.price', 'ASC');
+            break;
+        case 'price_high':
+            $builder->orderBy('products.price', 'DESC');
+            break;
+        default:
+            $builder->orderBy('products.id', 'DESC');
+            break;
+    }
+
     $products = $builder->paginate(12);
 
+    $categories = $productModel
+        ->select('category')
+        ->distinct()
+        ->orderBy('category', 'ASC')
+        ->findAll();
+
     return view('products/index', [
-        'products' => $products,
-        'pager' => $productModel->pager,
-        'q' => $q
+        'products'   => $products,
+        'pager'      => $productModel->pager,
+        'q'          => $q,
+        'category'   => $category,
+        'sort'       => $sort,
+        'categories' => $categories
     ]);
+
 }
 
     public function create()
