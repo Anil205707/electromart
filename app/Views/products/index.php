@@ -1,13 +1,14 @@
 <?= view('layout/header', ['title' => 'Products - ElectroMart']) ?>
 
-<div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+<div class="d-flex justify-content-between align-items-start flex-wrap mb-4 gap-3">
     <div>
-        <h1 class="page-title">ElectroMart Products</h1>
+        <h1 class="page-title mb-2">ElectroMart Products</h1>
         <p class="text-muted mb-0">Hello, <?= esc(session()->get('user_name')) ?>. Browse the latest listings below.</p>
     </div>
-    <div class="mt-3 mt-md-0 d-flex gap-2 flex-wrap">
-        <a href="<?= base_url('favourites') ?>" class="btn btn-warning">My Favourites</a>
-        <a href="<?= base_url('products/create') ?>" class="btn btn-primary">+ Add Product</a>
+
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="<?= base_url('favourites') ?>" class="btn btn-warning px-4 py-2 fw-semibold">My Favourites</a>
+        <a href="<?= base_url('products/create') ?>" class="btn btn-primary px-4 py-2 fw-semibold">+ Add Product</a>
     </div>
 </div>
 
@@ -16,59 +17,61 @@
 <?php endif; ?>
 
 <div class="search-box mb-4">
-    <form method="get" action="<?= base_url('products') ?>" class="row g-3">
-        <div class="col-md-4">
-            <input
-                type="text"
-                name="q"
-                class="form-control form-control-lg"
-                placeholder="Search products..."
-                value="<?= esc($q ?? '') ?>"
-            >
-        </div>
+    <form method="get" action="<?= base_url('products') ?>">
+        <div class="row g-3 align-items-end">
 
-        <div class="col-md-2">
-            <select name="category" class="form-select form-select-lg">
-                <option value="">All Categories</option>
-                <?php foreach ($categories as $cat): ?>
-                    <option value="<?= esc($cat['category']) ?>" <?= (($category ?? '') === $cat['category']) ? 'selected' : '' ?>>
-                        <?= esc($cat['category']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+            <div class="col-lg-4 col-md-12">
+                <label class="form-label fw-semibold">Search</label>
+                <input
+                    type="text"
+                    name="q"
+                    class="form-control form-control-lg"
+                    placeholder="Search products..."
+                    value="<?= esc($q ?? '') ?>"
+                >
+            </div>
 
-        <div class="col-md-2">
-            <select name="sort" class="form-select form-select-lg">
-                <option value="">Newest</option>
-                <option value="price_low" <?= (($sort ?? '') === 'price_low') ? 'selected' : '' ?>>Price: Low to High</option>
-                <option value="price_high" <?= (($sort ?? '') === 'price_high') ? 'selected' : '' ?>>Price: High to Low</option>
-            </select>
-        </div>
+            <div class="col-lg-3 col-md-4">
+                <label class="form-label fw-semibold">Category</label>
+                <select name="category" class="form-select form-select-lg">
+                    <option value="">All Categories</option>
+                    <?php foreach ($categories as $cat): ?>
+                        <option value="<?= esc($cat['category']) ?>" <?= (($category ?? '') === $cat['category']) ? 'selected' : '' ?>>
+                            <?= esc($cat['category']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-        <div class="col-md-2">
-            <select id="currencySelect" class="form-select form-select-lg">
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="INR">INR (₹)</option>
-                <option value="NPR">NPR (Rs)</option>
-            </select>
-        </div>
+            <div class="col-lg-2 col-md-4">
+                <label class="form-label fw-semibold">Sort</label>
+                <select name="sort" class="form-select form-select-lg">
+                    <option value="">Newest</option>
+                    <option value="price_low" <?= (($sort ?? '') === 'price_low') ? 'selected' : '' ?>>Low to High</option>
+                    <option value="price_high" <?= (($sort ?? '') === 'price_high') ? 'selected' : '' ?>>High to Low</option>
+                </select>
+            </div>
 
-        <div class="col-md-1 d-grid">
-            <button type="submit" class="btn btn-success btn-lg">Apply</button>
-        </div>
+            <div class="col-lg-3 col-md-4">
+                <label class="form-label fw-semibold">Currency</label>
+                <select id="currencySelect" class="form-select form-select-lg">
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="INR">INR (₹)</option>
+                    <option value="NPR">NPR (Rs)</option>
+                </select>
+            </div>
 
-        <div class="col-md-1 d-grid">
-            <button type="button" id="convertPricesBtn" class="btn btn-dark btn-lg">Convert</button>
+            <div class="col-12">
+                <div class="d-flex flex-wrap gap-2 pt-2">
+                    <button type="submit" class="btn btn-success px-4 py-2 fw-semibold">Apply Filters</button>
+                    <button type="button" id="convertPricesBtn" class="btn btn-dark px-4 py-2 fw-semibold">Convert Prices</button>
+                    <button type="button" id="resetPricesBtn" class="btn btn-outline-secondary px-4 py-2 fw-semibold">Reset to GBP</button>
+                </div>
+            </div>
+
         </div>
     </form>
-
-    <div class="row g-3 mt-2">
-        <div class="col-md-3 d-grid">
-            <button type="button" id="resetPricesBtn" class="btn btn-outline-secondary">Reset to GBP</button>
-        </div>
-    </div>
 </div>
 
 <div class="row g-4">
@@ -86,8 +89,8 @@
                         <img src="https://via.placeholder.com/400x220?text=No+Image" alt="No Image" class="product-image mb-3">
                     <?php endif; ?>
 
-                    <div class="d-flex justify-content-between align-items-start">
-                        <h4><?= esc($product['title']) ?></h4>
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h4 class="mb-0"><?= esc($product['title']) ?></h4>
                         <button
                             type="button"
                             class="btn btn-sm favourite-btn <?= in_array($product['id'], $favouriteIds ?? []) ? 'btn-danger' : 'btn-outline-danger' ?>"
@@ -101,7 +104,7 @@
 
                     <p class="mb-2 price-line" data-price="<?= esc($product['price']) ?>">
                         <strong>Price:</strong>
-                        <span class="price-text">£<?= esc($product['price']) ?></span>
+                        <span class="price-text">£<?= number_format((float)$product['price'], 2) ?></span>
                     </p>
 
                     <p class="mb-2"><strong>Seller:</strong> <?= esc($product['seller_name']) ?></p>
@@ -187,7 +190,7 @@ async function convertPrices() {
 
     setTimeout(() => {
         button.disabled = false;
-        button.textContent = 'Convert';
+        button.textContent = 'Convert Prices';
     }, 800);
 }
 
