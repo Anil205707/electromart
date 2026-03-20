@@ -3,7 +3,9 @@
 <div class="d-flex justify-content-between align-items-start flex-wrap mb-4 gap-3">
     <div>
         <h1 class="page-title mb-2">ElectroMart Products</h1>
-        <p class="text-muted mb-0">Hello, <?= esc(session()->get('user_name')) ?>. Browse the latest listings below.</p>
+        <p class="text-muted mb-0">
+            Hello, <?= esc(session()->get('user_name')) ?>. Browse the latest listings below.
+        </p>
     </div>
 
     <div class="d-flex gap-2 flex-wrap">
@@ -13,7 +15,9 @@
 </div>
 
 <?php if (session()->getFlashdata('success')): ?>
-    <div class="alert alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
+    <div class="alert alert-success">
+        <?= esc(session()->getFlashdata('success')) ?>
+    </div>
 <?php endif; ?>
 
 <div class="search-box mb-4">
@@ -83,18 +87,21 @@
         <?php foreach ($products as $product): ?>
             <div class="col-md-6 col-lg-4">
                 <div class="custom-card">
-                    <?php if ($product['image']): ?>
-                        <img src="<?= base_url('uploads/' . $product['image']) ?>" alt="Product Image" class="product-image mb-3">
-                    <?php else: ?>
-                        <img src="https://via.placeholder.com/400x220?text=No+Image" alt="No Image" class="product-image mb-3">
-                    <?php endif; ?>
+
+                    <div class="product-image-wrapper">
+                        <?php if (!empty($product['image'])): ?>
+                            <img src="<?= base_url('uploads/' . $product['image']) ?>" alt="Product Image" class="product-image">
+                        <?php else: ?>
+                            <img src="https://via.placeholder.com/400x220?text=No+Image" alt="No Image" class="product-image">
+                        <?php endif; ?>
+                    </div>
 
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <h4 class="mb-0"><?= esc($product['title']) ?></h4>
                         <button
                             type="button"
                             class="btn btn-sm favourite-btn <?= in_array($product['id'], $favouriteIds ?? []) ? 'btn-danger' : 'btn-outline-danger' ?>"
-                            data-product-id="<?= $product['id'] ?>"
+                            data-product-id="<?= esc($product['id']) ?>"
                         >
                             ♥
                         </button>
@@ -104,7 +111,7 @@
 
                     <p class="mb-2 price-line" data-price="<?= esc($product['price']) ?>">
                         <strong>Price:</strong>
-                        <span class="price-text">£<?= number_format((float)$product['price'], 2) ?></span>
+                        <span class="price-text">£<?= number_format((float) $product['price'], 2) ?></span>
                     </p>
 
                     <p class="mb-2"><strong>Seller:</strong> <?= esc($product['seller_name']) ?></p>
@@ -117,8 +124,8 @@
     <?php endif; ?>
 </div>
 
-<div class="mt-5 d-flex justify-content-center">
-    <?= $pager->links() ?>
+<div class="pagination-wrapper d-flex justify-content-center">
+    <?= $pager->links('default', 'custom_pager') ?>
 </div>
 
 <script>

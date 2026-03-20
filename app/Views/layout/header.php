@@ -6,69 +6,129 @@
     <title><?= esc($title ?? 'ElectroMart') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #f8f9fa, #e9f2ff);
-            min-height: 100vh;
-            font-family: Arial, sans-serif;
-        }
+    body {
+        background: linear-gradient(135deg, #f8f9fa, #e9f2ff);
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+    }
 
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
+    .navbar-brand {
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
 
-        .hero-card,
-        .custom-card,
-        .form-card {
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
+    .hero-card,
+    .custom-card,
+    .form-card {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
 
-        .hero-card {
-            padding: 50px;
-        }
+    .hero-card {
+        padding: 50px;
+    }
 
-        .custom-card {
-            padding: 20px;
-            height: 100%;
-            transition: transform 0.2s ease;
-        }
+    .custom-card {
+        padding: 20px;
+        height: 100%;
+        transition: transform 0.2s ease;
+    }
 
-        .custom-card:hover {
-            transform: translateY(-5px);
-        }
+    .custom-card:hover {
+        transform: translateY(-5px);
+    }
 
-        .form-card {
-            padding: 35px;
-        }
+    .form-card {
+        padding: 35px;
+    }
 
-        .page-title {
-            font-weight: 700;
-            color: #0d6efd;
-        }
+    .page-title {
+        font-weight: 700;
+        color: #0d6efd;
+    }
 
-        .product-image {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            border-radius: 14px;
-        }
+    .product-image-wrapper {
+        width: 100%;
+        height: 260px;
+        background: #f8f9fa;
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+    }
 
-        .search-box {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-            padding: 20px;
-        }
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+    }
 
-        footer {
-            margin-top: 60px;
-            padding: 20px 0;
-            text-align: center;
-            color: #666;
-        }
-    </style>
+    .detail-image-wrapper {
+        width: 100%;
+        height: 420px;
+        background: #f8f9fa;
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+    }
+
+    .detail-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+
+    .search-box {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        padding: 20px;
+    }
+
+    .pagination-wrapper {
+        margin-top: 40px;
+    }
+
+    .pagination {
+        gap: 8px;
+    }
+
+    .pagination .page-link {
+        border-radius: 10px !important;
+        padding: 10px 16px;
+        border: 1px solid #d0d7e2;
+        color: #0d6efd;
+        font-weight: 600;
+        background: #fff;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: #0d6efd;
+        border-color: #0d6efd;
+        color: #fff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #999;
+        background: #f1f3f5;
+        border-color: #e3e6ea;
+    }
+
+    footer {
+        margin-top: 60px;
+        padding: 20px 0;
+        text-align: center;
+        color: #666;
+    }
+</style>
 </head>
 <body>
 
