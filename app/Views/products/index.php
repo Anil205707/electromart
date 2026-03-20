@@ -5,7 +5,10 @@
         <h1 class="page-title">ElectroMart Products</h1>
         <p class="text-muted mb-0">Hello, <?= esc(session()->get('user_name')) ?>. Browse the latest listings below.</p>
     </div>
-    <a href="<?= base_url('index.php/products/create') ?>" class="btn btn-primary mt-3 mt-md-0">+ Add Product</a>
+    <div class="mt-3 mt-md-0 d-flex gap-2">
+        <a href="<?= base_url('index.php/favourites') ?>" class="btn btn-warning">My Favourites</a>
+        <a href="<?= base_url('index.php/products/create') ?>" class="btn btn-primary">+ Add Product</a>
+    </div>
 </div>
 
 <?php if (session()->getFlashdata('success')): ?>
@@ -64,7 +67,17 @@
                         <img src="https://via.placeholder.com/400x220?text=No+Image" alt="No Image" class="product-image mb-3">
                     <?php endif; ?>
 
-                    <h4><?= esc($product['title']) ?></h4>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h4><?= esc($product['title']) ?></h4>
+                        <button
+                            type="button"
+                            class="btn btn-sm favourite-btn <?= in_array($product['id'], $favouriteIds ?? []) ? 'btn-danger' : 'btn-outline-danger' ?>"
+                            data-product-id="<?= $product['id'] ?>"
+                        >
+                            ♥
+                        </button>
+                    </div>
+
                     <p class="mb-2"><strong>Category:</strong> <?= esc($product['category']) ?></p>
                     <p class="mb-2"><strong>Price:</strong> £<?= esc($product['price']) ?></p>
                     <p class="mb-2"><strong>Seller:</strong> <?= esc($product['seller_name']) ?></p>
@@ -78,7 +91,37 @@
 </div>
 
 <div class="mt-5 d-flex justify-content-center">
-    <?= $pager->links('default', 'bootstrap') ?>
+    <?= $pager->links() ?>
 </div>
+
+<script>
+document.querySelectorAll('.favourite-btn').forEach(button => {
+    button.addEventListener('click', async function () {
+        const productId = this.dataset.productId;
+
+        try {
+            const response = await fetch("<?= base_url('index.php/favourites/toggle') ?>", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "product_id=" + encodeURIComponent(productId)
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'added') {
+                this.classList.remove('btn-outline-danger');
+                this.classList.add('btn-danger');
+            } else if (data.status === 'removed') {
+                this.classList.remove('btn-danger');
+                this.classList.add('btn-outline-danger');
+            }
+        } catch (error) {
+            alert('Failed to update favourite.');
+        }
+    });
+});
+</script>
 
 <?= view('layout/footer') ?>

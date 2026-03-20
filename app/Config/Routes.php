@@ -20,3 +20,6 @@ $routes->get('/products/create', 'Products::create');
 $routes->post('/products/store', 'Products::store');
 $routes->get('/products/show/(:num)', 'Products::show/$1');
 $routes->get('/products/search-ajax', 'Products::searchAjax');
+
+$routes->get('/favourites', 'Favourites::index');
+$routes->post('/favourites/toggle', 'Favourites::toggle');

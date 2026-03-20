@@ -13,6 +13,7 @@ class Products extends BaseController
     }
 
     $productModel = new \App\Models\ProductModel();
+    $favouriteModel = new \App\Models\FavouriteModel();
 
     $q = trim((string) $this->request->getGet('q'));
     $category = trim((string) $this->request->getGet('category'));
@@ -54,17 +55,22 @@ class Products extends BaseController
         ->orderBy('category', 'ASC')
         ->findAll();
 
+    $favourites = $favouriteModel
+        ->where('user_id', session()->get('user_id'))
+        ->findAll();
+
+    $favouriteIds = array_column($favourites, 'product_id');
+
     return view('products/index', [
-        'products'   => $products,
-        'pager'      => $productModel->pager,
-        'q'          => $q,
-        'category'   => $category,
-        'sort'       => $sort,
-        'categories' => $categories
+        'products'     => $products,
+        'pager'        => $productModel->pager,
+        'q'            => $q,
+        'category'     => $category,
+        'sort'         => $sort,
+        'categories'   => $categories,
+        'favouriteIds' => $favouriteIds
     ]);
-
 }
-
     public function create()
     {
         if (!session()->get('logged_in')) {
