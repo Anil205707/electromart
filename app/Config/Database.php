@@ -28,10 +28,10 @@ class Database extends Config
      */
     public array $default = [
     'DSN'      => '',
-    'hostname' => '127.0.0.1',
-    'username' => 'root',
-    'password' => '',
-    'database' => 'electromart_db',
+    'hostname' => 'localhost',
+    'username' => '2313471',
+    'password' => '#Smirty#2072',
+    'database' => 'db2313471',
     'DBDriver' => 'MySQLi',
     'DBPrefix' => '',
     'pConnect' => false,
